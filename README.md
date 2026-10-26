@@ -41,40 +41,48 @@ Hệ thống tích hợp **Cơ chế an toàn Production (Production Safety Guar
 ```mermaid
 flowchart TD
     subgraph Config_Base ["1. Base Test & Lifecycle Management Layer"]
-        CONF["pom.xml / testng.xml\n(Execution Suite Config & Dependencies)"] --> BASE["BaseTest.java\n(Playwright, Browser, BrowserContext, Page Lifecycle)"]
-        BASE --> TRACE["Playwright Tracing & Video Capture\n(Traces on Failure / Success Recordings)"]
-        BASE --> HOOK["shouldNavigateHomeOnInit() Hook\n(Dynamic Home Navigation Guard & Cloudflare Shield)"]
+        CONF["pom.xml / testng.xml<br/>(Execution Suite Config & Dependencies)"] --> BASE["BaseTest.java<br/>(Playwright, Browser, BrowserContext, Page Lifecycle)"]
+        BASE --> TRACE["Playwright Tracing & Video Capture<br/>(Traces on Failure / Success Recordings)"]
+        BASE --> HOOK["shouldNavigateHomeOnInit Hook<br/>(Dynamic Home Navigation Guard & Cloudflare Shield)"]
     end
 
     subgraph Network_Security ["2. Network Interception & Production Safety Guard"]
-        BASE --> ROUTE["Playwright Route Interception (page.route)\n(Zero Production Pollution Guardrail)"]
-        ROUTE -->|POST /api/orders/checkout| MOCK_ORDER["Mock Checkout Response\n(HTTP 200 Order ID #YODY-E2E-TEST)"]
-        ROUTE -->|GET /api/profile| MOCK_AUTH["Mock Session & Cookie/Token Inject\n(Authenticated State Simulation)"]
-        ROUTE -->|GET /api/orders/{id}| IDOR_CHECK["IDOR Security Barrier (403 Forbidden)\n(Cross-Tenant Access Verification)"]
+        BASE --> ROUTE["Playwright Route Interception page.route<br/>(Zero Production Pollution Guardrail)"]
+        ROUTE -->|POST /api/orders/checkout| MOCK_ORDER["Mock Checkout Response<br/>(HTTP 200 Order ID YODY-E2E-TEST)"]
+        ROUTE -->|GET /api/profile| MOCK_AUTH["Mock Session & Cookie/Token Inject<br/>(Authenticated State Simulation)"]
+        ROUTE -->|GET /api/orders/:id| IDOR_CHECK["IDOR Security Barrier (403 Forbidden)<br/>(Cross-Tenant Access Verification)"]
     end
 
     subgraph POM_Domain ["3. Page Object Model (POM) Domain Layer"]
-        BASE --> HP["HomePage.java\n(Header, Mega Menu, Search Drawer)"]
-        BASE --> AUTH["AuthModal.java & OtpModal.java\n(Login/Register, 6-digit OTP Input, Timer)"]
-        BASE --> SEARCH["SearchAndFilterPage.java\n(Keyword Suggestion, Faceted Filter, Sorting)"]
-        BASE --> PDP["ProductDetailPage.java\n(SKU, Color, Size, Quantity, Buy Now)"]
-        BASE --> CART["CartPage.java & VoucherModal.java\n(Cart CRUD, Voucher Thresholds & Discount Math)"]
-        BASE --> CHECKOUT["OrderConfirmationPage.java & MoMoPaymentGatewayPage.java\n(Form Filling, MoMo QR Simulator, Intercepted Submit)"]
-        BASE --> ACC["AccountProfilePage.java & OrderHistoryPage.java & OrderDetailPage.java\n(Profile Updates, Tab Filtering, Financial Breakdown Math)"]
+        BASE --> HP["HomePage.java<br/>(Header, Mega Menu, Search Drawer)"]
+        BASE --> AUTH["AuthModal.java & OtpModal.java<br/>(Login/Register, 6-digit OTP Input, Timer)"]
+        BASE --> SEARCH["SearchAndFilterPage.java<br/>(Keyword Suggestion, Faceted Filter, Sorting)"]
+        BASE --> PDP["ProductDetailPage.java<br/>(SKU, Color, Size, Quantity, Buy Now)"]
+        BASE --> CART["CartPage.java & VoucherModal.java<br/>(Cart CRUD, Voucher Thresholds & Discount Math)"]
+        BASE --> CHECKOUT["OrderConfirmationPage.java & MoMoPaymentGatewayPage.java<br/>(Form Filling, MoMo QR Simulator, Intercepted Submit)"]
+        BASE --> ACC["AccountProfilePage.java & OrderHistoryPage.java & OrderDetailPage.java<br/>(Profile Updates, Tab Filtering, Financial Breakdown Math)"]
     end
 
     subgraph TestNG_Execution ["4. TestNG Test Suites Layer"]
-        HP & AUTH --> M1["Module 1: AuthEmailTest, OtpVerificationTest"]
+        HP --> M1["Module 1: AuthEmailTest, OtpVerificationTest"]
+        AUTH --> M1
         SEARCH --> M2["Module 2: SearchKeywordTest, ProductFilterAndSortTest"]
-        PDP & CART --> M3["Module 3: ProductDetailTest, CartManagementTest, VoucherTest"]
+        PDP --> M3["Module 3: ProductDetailTest, CartManagementTest, VoucherTest"]
+        CART --> M3
         CHECKOUT --> M4["Module 4: OrderConfirmationTest, PaymentGatewayTest"]
         ACC --> M5["Module 5: AccountProfileTest, OrderHistoryTest, AccessControlTest"]
     end
 
     subgraph Artifacts_Report ["5. Output Artifacts & Provenance Layer"]
-        M1 & M2 & M3 & M4 & M5 --> SUREFIRE["target/surefire-reports/\n(HTML Emailable Report, XML Test Results)"]
-        M1 & M2 & M3 & M4 & M5 --> TRACE_ZIP["traces/\n(Playwright Action Traces .zip with DOM & Timing)"]
-        M1 & M2 & M3 & M4 & M5 --> DOCS["docs/\n(BAO_CAO_MODULE_1..5.md Markdown Technical Reports)"]
+        M1 --> SUREFIRE["target/surefire-reports/<br/>(HTML Emailable Report, XML Test Results)"]
+        M2 --> SUREFIRE
+        M3 --> SUREFIRE
+        M4 --> SUREFIRE
+        M5 --> SUREFIRE
+        M1 --> TRACE_ZIP["traces/<br/>(Playwright Action Traces .zip with DOM & Timing)"]
+        M5 --> TRACE_ZIP
+        M1 --> DOCS["docs/<br/>(BAO_CAO_MODULE_1..5.md Markdown Technical Reports)"]
+        M5 --> DOCS
     end
 
     style CONF fill:#f9f9f9,stroke:#333,stroke-width:1.5px
@@ -83,9 +91,20 @@ flowchart TD
     style HOOK fill:#fffde7,stroke:#fbc02d,stroke-width:2px
     style ROUTE fill:#ffebee,stroke:#c62828,stroke-width:2px
     style MOCK_ORDER fill:#e8f5e9,stroke:#2e7d32,stroke-width:1.5px
+    style MOCK_AUTH fill:#e8f5e9,stroke:#2e7d32,stroke-width:1.5px
     style IDOR_CHECK fill:#fff3e0,stroke:#e65100,stroke-width:2px
-    style POM_Domain fill:#f3e5f5,stroke:#7b1fa2,stroke-width:1.5px
-    style TestNG_Execution fill:#e8eaf6,stroke:#3f51b5,stroke-width:2px
+    style HP fill:#f3e5f5,stroke:#7b1fa2,stroke-width:1.5px
+    style AUTH fill:#f3e5f5,stroke:#7b1fa2,stroke-width:1.5px
+    style SEARCH fill:#f3e5f5,stroke:#7b1fa2,stroke-width:1.5px
+    style PDP fill:#f3e5f5,stroke:#7b1fa2,stroke-width:1.5px
+    style CART fill:#f3e5f5,stroke:#7b1fa2,stroke-width:1.5px
+    style CHECKOUT fill:#f3e5f5,stroke:#7b1fa2,stroke-width:1.5px
+    style ACC fill:#f3e5f5,stroke:#7b1fa2,stroke-width:1.5px
+    style M1 fill:#e8eaf6,stroke:#3f51b5,stroke-width:2px
+    style M2 fill:#e8eaf6,stroke:#3f51b5,stroke-width:2px
+    style M3 fill:#e8eaf6,stroke:#3f51b5,stroke-width:2px
+    style M4 fill:#e8eaf6,stroke:#3f51b5,stroke-width:2px
+    style M5 fill:#e8eaf6,stroke:#3f51b5,stroke-width:2px
     style SUREFIRE fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
     style TRACE_ZIP fill:#e0f2f1,stroke:#00796b,stroke-width:2px
     style DOCS fill:#eceff1,stroke:#455a64,stroke-width:1.5px
