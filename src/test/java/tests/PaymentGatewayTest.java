@@ -26,6 +26,11 @@ public class PaymentGatewayTest extends BaseTest {
     private static final String TEST_PRODUCT_URL =
             "https://yody.vn/product/ao-polo-nu-co-v-bo-ke-co-gian-dan-hoi-phom-slim-fit-ton-dang?color=765&size=1";
 
+    @Override
+    protected boolean shouldNavigateHomeOnInit() {
+        return false;
+    }
+
     /**
      * Helper to prepare an order with 1 product and navigate to /order.
      */

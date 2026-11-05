@@ -28,6 +28,11 @@ public class OrderConfirmationTest extends BaseTest {
     private static final String TEST_PRODUCT_URL =
             "https://yody.vn/product/ao-polo-nu-co-v-bo-ke-co-gian-dan-hoi-phom-slim-fit-ton-dang?color=765&size=1";
 
+    @Override
+    protected boolean shouldNavigateHomeOnInit() {
+        return false;
+    }
+
     /**
      * Helper to prepare an order by adding a product and navigating to /order.
      */
@@ -163,6 +168,8 @@ public class OrderConfirmationTest extends BaseTest {
      */
     @Test(description = "TC_DH_05 - Đặt hàng kèm áp dụng mã khuyến mãi hợp lệ")
     public void testPlaceOrderWithValidVoucher() {
+        OrderConfirmationPage orderPage = prepareOrder(1);
+
         page.route("**/promotions/**", route -> {
             route.fulfill(new Route.FulfillOptions()
                     .setStatus(200)
@@ -170,7 +177,6 @@ public class OrderConfirmationTest extends BaseTest {
                     .setBody("{\"code\":200,\"message\":\"success\",\"data\":[{\"id\":\"1\",\"title\":\"Giảm 50K\",\"code\":\"YODY50K\",\"discount_value\":50000}]}"));
         });
 
-        OrderConfirmationPage orderPage = prepareOrder(1);
         long initialTotal = orderPage.getFinalTotalAmount();
 
         VoucherModal modal = orderPage.openVoucherModal();
